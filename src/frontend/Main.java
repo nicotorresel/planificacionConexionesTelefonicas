@@ -34,7 +34,6 @@ import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-
 public class Main {
 
 	private JFrame frame;
@@ -47,6 +46,7 @@ public class Main {
 	private JLabel longitud;
 	private JComboBox<String> prov;
 	private JButton agregar;
+	private JButton confirmarCostos;
 	private JTable table;
 	private DefaultTableModel model;
 	private DefaultTableModel model_1;
@@ -68,6 +68,11 @@ public class Main {
 	private JTable table_1;
 	private JLabel costoTotal;
 	private JTextField total;
+	private boolean confirmado;
+	private ImageIcon confirm1;
+	private ImageIcon confirm;
+	private ImageIcon exit; 
+	private ImageIcon exit1;
 
 	/**
 	 * Launch the application.
@@ -96,6 +101,14 @@ public class Main {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		confirmado = false;
+	    
+	    confirm = new ImageIcon(Main.class.getResource("/frontend/confirm.png"));
+	    confirm1 = new ImageIcon(Main.class.getResource("/frontend/confirm1.png"));
+	    exit = new ImageIcon(Main.class.getResource("/frontend/exit.png"));
+	    exit1 = new ImageIcon(Main.class.getResource("/frontend/exit1.png"));
+		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 900, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,19 +116,20 @@ public class Main {
 		
 		//boton para abandonar el juego
 		salir = new JButton("");
+		salir.setContentAreaFilled(false);
+		salir.setBorderPainted(false);
+		salir.setIcon(exit);
 		salir.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				salir.setBorderPainted(true);
+				salir.setIcon(exit1);
+				salir.setToolTipText("Salir");
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				salir.setBorderPainted(false);
+				salir.setIcon(exit);
 			}
 		});
-		salir.setContentAreaFilled(false);
-		salir.setBorderPainted(false);
-		salir.setIcon(new ImageIcon(Main.class.getResource("/frontend/exit.png")));
 		salir.setFont(new Font("Century Gothic", Font.BOLD, 17));
 		salir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -133,43 +147,89 @@ public class Main {
 		red = new Red();
 		
 		panelCostos = new JPanel();
-		panelCostos.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "costos", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(70, 130, 180)));
-		panelCostos.setBounds(19, 19, 457, 87);
+		panelCostos.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Costos", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(70, 130, 180)));
+		panelCostos.setBounds(19, 19, 457, 110);
 		frame.getContentPane().add(panelCostos);
 		panelCostos.setLayout(null);
 		
-		costoKm = new JLabel("por Km (en pesos)");
-		costoKm.setBounds(6, 18, 154, 16);
+		costoKm = new JLabel("por km (en pesos)");
+		costoKm.setBounds(10, 18, 154, 16);
 		panelCostos.add(costoKm);
 		costoKm.setHorizontalAlignment(SwingConstants.CENTER);
 		costoKm.setFont(new Font("Century Gothic", Font.BOLD, 11));
 		
 		aumento = new JLabel("% aumento > 300 km");
-		aumento.setBounds(173, 18, 134, 16);
+		aumento.setBounds(175, 18, 134, 16);
 		panelCostos.add(aumento);
 		aumento.setHorizontalAlignment(SwingConstants.CENTER);
 		aumento.setFont(new Font("Century Gothic", Font.BOLD, 11));
 		
-		costoFijo = new JLabel("Fijo (en pesos)");
-		costoFijo.setBounds(319, 18, 132, 16);
+		costoFijo = new JLabel("fijo (en pesos)");
+		costoFijo.setBounds(324, 18, 132, 16);
 		panelCostos.add(costoFijo);
 		costoFijo.setHorizontalAlignment(SwingConstants.CENTER);
 		costoFijo.setFont(new Font("Century Gothic", Font.BOLD, 11));
 		
 		costoPorKm = new JTextField();
-		costoPorKm.setBounds(27, 44, 120, 30);
+		costoPorKm.setBounds(27, 38, 120, 30);
 		panelCostos.add(costoPorKm);
 		costoPorKm.setColumns(10);
 		
 		raise = new JTextField();
-		raise.setBounds(183, 44, 120, 30);
+		raise.setBounds(183, 38, 120, 30);
 		panelCostos.add(raise);
 		raise.setColumns(10);
 		
 		fijo = new JTextField();
-		fijo.setBounds(329, 44, 120, 30);
+		fijo.setBounds(329, 38, 120, 30);
 		panelCostos.add(fijo);
 		fijo.setColumns(10);
+		
+		confirmarCostos = new JButton("Confirmar Costos");
+		confirmarCostos.setBackground(Color.WHITE);
+		confirmarCostos.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				confirmarCostos.setBounds(173, 68, 146, 37);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				confirmarCostos.setBounds(173, 68, 144, 36);
+			}
+		});
+		confirmarCostos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(costoPorKm.getText().equals("") || raise.getText().equals("") || fijo.getText().equals("")) {
+					JOptionPane.showMessageDialog(frame, "Todos los campos de costos deben estar completos");
+				}
+				else if( !isNumeric(costoPorKm.getText()) || !isNumeric(fijo.getText()) || !isNumeric(raise.getText())) {
+					JOptionPane.showMessageDialog(frame, "Los costos deben ser numericos");
+				}
+				else {
+					confirmado = true;
+					costoPorKm.setEnabled(false);
+					costoPorKm.setEditable(false);
+					raise.setEnabled(false);
+					raise.setEditable(false);
+					fijo.setEnabled(false);
+					fijo.setEditable(false);
+					
+					double ckm = Double.valueOf(costoPorKm.getText());
+					double aum = Double.valueOf(raise.getText());
+					double cf = Double.valueOf(fijo.getText());
+					
+					Tramo.setCostoPorKm(ckm);
+					Tramo.setAumento(aum);
+					Tramo.setCostoFijo(cf);
+					
+				}
+				
+			}
+		});
+		confirmarCostos.setFocusPainted(false);
+		confirmarCostos.setBounds(173, 68, 144, 36);
+		confirmarCostos.setFont(new Font("Century Gothic", Font.BOLD, 13));
+		panelCostos.add(confirmarCostos);
 		
 		
 		localidad = new JLabel("Localidad");
@@ -218,18 +278,19 @@ public class Main {
 		
 		agregar = new JButton("");
 		agregar.setBorderPainted(false);
+		agregar.setIcon(confirm);
 		agregar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				agregar.setBorderPainted(true);
+				agregar.setIcon(confirm1);
+				agregar.setToolTipText("Agregar localidad a la tabla");
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				agregar.setBorderPainted(false);
+				agregar.setIcon(confirm);
 			}
 		});
 		agregar.setForeground(new Color(0, 0, 0));
-		agregar.setIcon(new ImageIcon(Main.class.getResource("/frontend/confirm.png")));
 		agregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -239,24 +300,13 @@ public class Main {
 				else if(!isNumeric(lat.getText()) || !isNumeric(lon.getText())) {
 					JOptionPane.showMessageDialog(frame, "Los campos Latitud  Longitud deben ser numericos");
 				}
-				else if(costoPorKm.getText().equals("") || raise.getText().equals("") || fijo.getText().equals("")) {
-					JOptionPane.showMessageDialog(frame, "Los campos de costos deben estar completos");
-				}
-				else if( !isNumeric(costoPorKm.getText()) || !isNumeric(fijo.getText()) || !isNumeric(raise.getText())) {
-					JOptionPane.showMessageDialog(frame, "Los campos de costos deben ser numericos");
+				else if (!confirmado) {
+					JOptionPane.showMessageDialog(frame, "Primero debe confirmar los costos");
 				}
 				else {
 					Object data[] = {loc.getText(), prov.getSelectedItem(), lat.getText(), lon.getText()};
 					
 					model.addRow(data);
-					
-					double ckm = Double.valueOf(costoPorKm.getText());
-					double aum = Double.valueOf(raise.getText());
-					double cf = Double.valueOf(fijo.getText());
-					
-					Tramo.setCostoPorKm(ckm);
-					Tramo.setAumento(aum);
-					Tramo.setCostoFijo(cf);
 					
 					double latit = Double.valueOf(lat.getText());
 					double longit = Double.valueOf(lon.getText());
@@ -278,7 +328,7 @@ public class Main {
 				}
 			}
 		});
-		agregar.setBounds(317, 175, 66, 61);
+		agregar.setBounds(317, 181, 55, 55);
 		agregar.setFont(new Font("Century Gothic", Font.BOLD, 17));
 		frame.getContentPane().add(agregar);
 		model = new DefaultTableModel();
@@ -295,7 +345,17 @@ public class Main {
 		table.setModel(model);
 		
 		//este boton es para realizar el arbol generador minimo
-		JButton generarArbol = new JButton("Generar AGM");
+		JButton generarArbol = new JButton("Generar Conexiones");
+		generarArbol.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				generarArbol.setBounds(231, 605, 155, 37);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				generarArbol.setBounds(231, 605, 153, 36);
+			}
+		});
 		generarArbol.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int ret = table.getRowCount();
@@ -319,34 +379,57 @@ public class Main {
 				}	
 			}
 		});
-		generarArbol.setBounds(238, 605, 120, 30);
-		generarArbol.setFont(new Font("Century Gothic", Font.BOLD, 12));
+		generarArbol.setBounds(231, 605, 153, 36);
+		generarArbol.setFont(new Font("Century Gothic", Font.BOLD, 13));
 		frame.getContentPane().add(generarArbol);
 				
-		limpiarTabla = new JButton("Limpiar Tablas");
+		limpiarTabla = new JButton("Limpiar Campos");
+		limpiarTabla.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				limpiarTabla.setBounds(62, 605, 155, 37);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				limpiarTabla.setBounds(62, 605, 153, 36);
+			}
+		});
 		limpiarTabla.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				confirmado = false;
+				costoPorKm.setEditable(true);
+				costoPorKm.setEnabled(true);
+				costoPorKm.setText("");
+				raise.setEditable(true);
+				raise.setEnabled(true);
+				raise.setText("");
+				fijo.setEditable(true);
+				fijo.setEnabled(true);
+				fijo.setText("");
+				
 				int count = model.getRowCount();
-				for (int i = 0; i<count; i++) {
-					for (int j = 0; j<4; j++) {
-						model.setValueAt("", i, j);
-					}
+
+				for (int i=count-1; i>=0;i--) {
+					model.removeRow(i);
 				}
 				
+				
 				int count2 = model_1.getRowCount();
-				for (int k = 0; k<count2; k++) {
-					for (int l = 0; l<3; l++) {
-						model_1.setValueAt("", k, l);
-					}
+
+				for (int j=count2-1;j>=0;j--) {
+					model_1.removeRow(j);
 				}
+				
+				total.setText("");
 				
 				red = new Red();
 				JOptionPane.showMessageDialog(frame, "Tablas borradas correctamente");
 				
 			}
 		});
-		limpiarTabla.setBounds(83, 605, 120, 30);
-		limpiarTabla.setFont(new Font("Century Gothic", Font.BOLD, 12));
+		limpiarTabla.setBounds(62, 605, 153, 36);
+		limpiarTabla.setFont(new Font("Century Gothic", Font.BOLD, 13));
 		frame.getContentPane().add(limpiarTabla);
 		
 		//mapa para mostrar las localidades
@@ -359,8 +442,8 @@ public class Main {
 		Coordinate coordin = new Coordinate(-34.521806,-58.700915);
 		mapa.setDisplayPosition(coordin, 6);
 			
-		JLabel arbolGM = new JLabel("Arbol Generador Minimo");
-		arbolGM.setBounds(571, 341, 181, 15);
+		JLabel arbolGM = new JLabel("Red de conexiones óptima");
+		arbolGM.setBounds(579, 342, 186, 15);
 		arbolGM.setFont(new Font("Century Gothic", Font.BOLD, 13));
 		frame.getContentPane().add(arbolGM);
 		
@@ -388,7 +471,7 @@ public class Main {
 		total = new JTextField();
 		total.setEnabled(false);
 		total.setEditable(false);
-		total.setBounds(660, 494, 122, 27);
+		total.setBounds(658, 489, 122, 36);
 		total.setFont(new Font("Century Gothic", Font.BOLD, 13));
 		frame.getContentPane().add(total);
 		total.setColumns(10);
@@ -412,7 +495,10 @@ public class Main {
 	    table.getTableHeader().resizeAndRepaint();
 	    
 	    table.getColumnModel().getColumn(3).setHeaderValue(longitud.getText());
-	    table.getTableHeader().resizeAndRepaint();	    
+	    table.getTableHeader().resizeAndRepaint();
+
+	    
+	    
 	}
 		
 	//devuelve true si el string pasasdo por parametro tiene equivalenta en formato entero
