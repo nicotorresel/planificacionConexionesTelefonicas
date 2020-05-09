@@ -73,6 +73,7 @@ public class Main {
 	private ImageIcon confirm;
 	private ImageIcon exit; 
 	private ImageIcon exit1;
+	private Coordinate coordin;
 
 	/**
 	 * Launch the application.
@@ -103,7 +104,8 @@ public class Main {
 	private void initialize() {
 		
 		confirmado = false;
-	    
+		
+	    //cargo las imagenes de los iconos
 	    confirm = new ImageIcon(Main.class.getResource("/frontend/confirm.png"));
 	    confirm1 = new ImageIcon(Main.class.getResource("/frontend/confirm1.png"));
 	    exit = new ImageIcon(Main.class.getResource("/frontend/exit.png"));
@@ -139,6 +141,7 @@ public class Main {
 		salir.setBounds(837, 605, 57, 67);
 		frame.getContentPane().add(salir);
 		
+		//panel que contiene al mapa
 		controlMapa = new JPanel();
 		controlMapa.setBounds(542, 35, 335, 259);
 		controlMapa.setLayout(null);
@@ -375,7 +378,7 @@ public class Main {
 						model_1.addRow(datos);
 					}
 					total.setText(String.valueOf(result));
-					
+				
 				}	
 			}
 		});
@@ -397,6 +400,7 @@ public class Main {
 		limpiarTabla.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				//habilito los costos de nuevo
 				confirmado = false;
 				costoPorKm.setEditable(true);
 				costoPorKm.setEnabled(true);
@@ -408,6 +412,7 @@ public class Main {
 				fijo.setEnabled(true);
 				fijo.setText("");
 				
+				//limpio las tablas
 				int count = model.getRowCount();
 
 				for (int i=count-1; i>=0;i--) {
@@ -421,7 +426,13 @@ public class Main {
 					model_1.removeRow(j);
 				}
 				
+				//borro el total 
 				total.setText("");
+				
+				//posiciono el mapa al inicio
+				coordin = new Coordinate(-34.521806,-58.700915);
+				mapa.setDisplayPosition(coordin, 6);
+				mapa.removeAllMapMarkers();
 				
 				red = new Red();
 				JOptionPane.showMessageDialog(frame, "Tablas borradas correctamente");
@@ -439,7 +450,7 @@ public class Main {
 		mapa.setBounds(503, 35, 371, 269);
 		mapa.setLayout(null);
 		
-		Coordinate coordin = new Coordinate(-34.521806,-58.700915);
+		coordin = new Coordinate(-34.521806,-58.700915);
 		mapa.setDisplayPosition(coordin, 6);
 			
 		JLabel arbolGM = new JLabel("Red de conexiones óptima");
@@ -458,7 +469,6 @@ public class Main {
 		frame.getContentPane().add(scrollPane_1);			
  		scrollPane_1.setViewportView(table_1);
  		
- 		
  		table_1.setFillsViewportHeight(true);
  		table_1.setEnabled(false);
 		table_1.setModel(model_1);
@@ -476,6 +486,7 @@ public class Main {
 		frame.getContentPane().add(total);
 		total.setColumns(10);
 		
+		//pongo nombres a las columnas de las dos tablas
 	    table_1.getColumnModel().getColumn(0).setHeaderValue("Localidad");
 	    table_1.getTableHeader().resizeAndRepaint();
 	    
@@ -495,9 +506,7 @@ public class Main {
 	    table.getTableHeader().resizeAndRepaint();
 	    
 	    table.getColumnModel().getColumn(3).setHeaderValue(longitud.getText());
-	    table.getTableHeader().resizeAndRepaint();
-
-	    
+	    table.getTableHeader().resizeAndRepaint();    
 	    
 	}
 		

@@ -32,10 +32,6 @@ public class Red {
 		return (loc1.existeTramo(loc2) || loc2.existeTramo(loc1));
 	}
 	
-	public boolean tieneTramo(Localidad loc) {
-		return loc.tieneTramos();
-	}
-	
 	//valida si la localidad existe en la red (nodo o vertice)
 	public boolean existeLocalidad (Localidad loc) {
 		return (this.localidades.contains(loc));
@@ -63,8 +59,7 @@ public class Red {
 
 	    return Math.sqrt(distance);  
 	}
-	
-	
+		
 	public List<Localidad> getLocalidades(){
 		return this.localidades;
 	}

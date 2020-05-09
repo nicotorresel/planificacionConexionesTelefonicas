@@ -87,13 +87,6 @@ public class Tramo implements Comparable <Tramo> {
 		return true;
 	}
 
-//	@Override
-//	public int compareTo(Tramo o) {
-//		String a = new String (String.valueOf(this.costoTramo));
-//		String b = new String (String.valueOf(o.getCostoTramo()));
-//		return a.compareTo(b);
-//	}
-
    @Override
     public int compareTo(Tramo o) {
         if (this.getCostoTramo() < o.getCostoTramo())

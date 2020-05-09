@@ -11,7 +11,6 @@ public class Localidad {
 	private ArrayList<Tramo>tramos;
 	private boolean marcada;
 
-	
 	public Localidad (String nombre, String provincia, double latitud, double longitud) {
 		
 		this.nombre = nombre;
@@ -58,7 +57,6 @@ public class Localidad {
 		return ret;
 	}
 	
-
 	public boolean tieneTramos() {
 		return !this.tramos.isEmpty();
 	}

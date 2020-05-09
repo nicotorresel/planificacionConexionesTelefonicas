@@ -5,7 +5,6 @@ import java.util.Collections;
 
 public class ArbolGeneradorMinimo {
 	
-	//private ArrayList<Tramo> tramos;
 	private ArrayList<Tramo> result;
 	
 	public ArbolGeneradorMinimo(Red red) {
